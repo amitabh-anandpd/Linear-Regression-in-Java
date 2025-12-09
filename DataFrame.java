@@ -11,7 +11,7 @@ class DataFrame {
     private List<String> columns;
     private List<String> rows;
     private List<List<Object>> data;
-    private List<Class <?>> colType;
+    public List<Class <?>> colType;
 
     private boolean checkRowSize(List<Object> row){
         if(this.data.get(0).size()!=row.size() && !this.data.isEmpty())
