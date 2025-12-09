@@ -83,7 +83,7 @@ public class LinearRegression {
                 System.out.println("Epoch " + epoch + " Loss: " + loss);
             }
             for(int j = 0; j < numFeatures; j++){
-                this.weights[j] -= (learningRate / numSamples) * weightGradients[j];
+                this.weights[j] -= 2 * (learningRate / numSamples) * weightGradients[j];
             }
            this.bias -= (learningRate / numSamples) * biasGradient;
         }
