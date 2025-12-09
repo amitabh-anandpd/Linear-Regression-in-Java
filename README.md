@@ -28,7 +28,26 @@ This project implements Linear Regression from scratch in Java, without using an
 ## Algorithm Details
 ### Hypothesis Function
 ```math
-\[
 \hat{y} = \mathbf{w}^T \mathbf{x} + b
-\]
+```
+Where:
+* `w` = learned Weights
+* `b` = learned Bias
+### Loss Function (MSE)
+```math
+\mathcal{L}(\mathbf{w}, b) = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
+```
+### Optimization
+* Batch Gradient Descent
+* Weight update:
+```math
+\mathbf{w}^{(t+1)}
+= \mathbf{w}^{(t)} - \alpha \cdot \frac{2}{n}
+\sum_{i=1}^{n} (\hat{y}_i - y_i)\mathbf{x}_i
+```
+* Bias update:
+```math
+b^{(t+1)}
+= b^{(t)} - \alpha \cdot \frac{2}{n}
+\sum_{i=1}^{n} (\hat{y}_i - y_i)
 ```
