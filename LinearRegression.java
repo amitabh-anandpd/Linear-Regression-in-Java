@@ -6,15 +6,44 @@ public class LinearRegression {
     double bias;
     int numFeatures;
     int numSamples;
+    EncodeData encoder;
+    double learningRate = 0.01;
+    int epochs = 1000;
     LinearRegression() {
         this.data = null;
-        for (int i = 0; i < weights.length; i++) {
+        for (int i = 0; i < this.weights.length; i++) {
             this.weights[i] = 0.0;
         }
         this.bias = 0.0;
     }
     private boolean isNumeric(Class<?> cls) {
         return Number.class.isAssignableFrom(cls);
+    }
+    private void checkEncoding(List<List<Object>> data, List<Class<?>> colType){
+        if (this.encoder == null) {
+            this.encoder = new EncodeData();
+        }
+        int numCols = colType.size();
+        for(int j = 0; j < numCols; j++){
+            if(isNumeric(colType.get(j))){
+                continue;
+            }
+            String key = "col_" + j;
+            this.encoder.newMap(key);
+
+            int code = 0;
+
+            for(int i = 0; i < data.size(); i++){
+                Object val = data.get(i).get(j);
+                String subKey = val.toString();
+                if(!this.encoder.checkSubkey(key, subKey)){
+                    this.encoder.addSingleData(key, subKey, code);
+                    code += 1;
+                }
+                int encodedVal = this.encoder.getData(key, subKey);
+                data.get(i).set(j, encodedVal);
+            }
+        }
     }
     public void fit(DataFrame dataframe, int targetIndex){
         this.data = dataframe.getData();
@@ -27,13 +56,74 @@ public class LinearRegression {
         checkEncoding(this.data, dataframe.colType);
         fit(this.data, target);
     }
-    private void fit(List<List<Object>> features, List<Object> target){
-    }
-    private void checkEncoding(List<List<Object>> data, List<Class<?>> colType){
-        for(int j = 0; j < colType.size(); j++){
-            if(!isNumeric(colType.get(j))){
-                throw new IllegalArgumentException("All features must be numeric. Column " + j + " is not numeric.");
-            }
+    private double predictRow(List<Object> row) {
+        double yHat =this.bias;
+        for (int j = 0; j < this.weights.length; j++) {
+            yHat += this.weights[j] * ((Number) row.get(j)).doubleValue();
         }
+        return yHat;
+    }
+    private void fit(List<List<Object>> features, List<Object> target){
+        for(int epoch = 0; epoch < epochs; epoch++){
+            double[] weightGradients = new double[numFeatures];
+            double biasGradient = 0.0;
+            for(int i = 0; i < numSamples; i++){
+                double yHat = predictRow(features.get(i));
+                double yTrue = ((Number) target.get(i)).doubleValue();
+                double error = yHat - yTrue;
+                for(int j = 0; j < numFeatures; j++){
+                    weightGradients[j] += error * ((Number) features.get(i).get(j)).doubleValue();
+                }
+                biasGradient += error;
+            }
+            double loss = 0.0;
+            for (int i = 0; i < numSamples; i++) {
+                double err = predictRow(features.get(i)) -
+                            ((Number) target.get(i)).doubleValue();
+                loss += err * err;
+            }
+            loss /= numSamples;
+            if (epoch % 10 == 0) {
+                System.out.println("Epoch " + epoch + " Loss: " + loss);
+            }
+            for(int j = 0; j < numFeatures; j++){
+                this.weights[j] -= (learningRate / numSamples) * weightGradients[j];
+            }
+           this.bias -= (learningRate / numSamples) * biasGradient;
+        }
+    }
+
+    public double predict(List<Object> row){
+        if (row.size() != numFeatures) {
+            throw new IllegalArgumentException("Feature size mismatch");
+        }
+        for(int i = 0; i < numFeatures; i++){
+            if(isNumeric(row.get(i).getClass())){
+                continue;
+            }
+            String key = "col_" + i;
+            String subKey = row.get(i).toString();
+            if(!this.encoder.checkSubkey(key, subKey)){
+                throw new IllegalArgumentException("Unknown category: " + subKey + " in column " + i);
+            }
+            int encodedVal = this.encoder.getData(key, subKey);
+            row.set(i, encodedVal);
+        }
+        return predictRow(row);
+    }
+    public double[] predict(DataFrame dataframe) {
+        List<List<Object>> features = dataframe.getData();
+        List<Class<?>> colType = dataframe.colType;
+
+        checkEncoding(features, colType);
+
+        int n = features.size();
+        double[] predictions = new double[n];
+
+        for (int i = 0; i < n; i++) {
+            predictions[i] = predict(features.get(i));
+        }
+
+        return predictions;
     }
 }
