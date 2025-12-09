@@ -304,4 +304,17 @@ class DataFrame {
         for(int i=0;i<this.data.size();i++)
         iterate(i, this.data.get(i), columns.size());
     }
+    public DataFrame deepCopy() {
+        List<List<Object>> newData = new ArrayList<>();
+        for (List<Object> row : this.data) {
+            newData.add(new ArrayList<>(row));
+        }
+
+        List<String> newCols = new ArrayList<>(this.columns);
+        List<Class<?>> newColType = new ArrayList<>(this.colType);
+
+        DataFrame copy = new DataFrame(newData, newCols);
+        copy.colType = newColType;
+        return copy;
+    }
 }
