@@ -97,17 +97,20 @@ public class LinearRegression {
         if (row.size() != numFeatures) {
             throw new IllegalArgumentException("Feature size mismatch");
         }
+        List<Object> encodedRow = new java.util.ArrayList<>(numFeatures);
         for(int i = 0; i < numFeatures; i++){
-            if(isNumeric(row.get(i).getClass())){
+            Object val = row.get(i);
+            if(val instanceof Number){
+                encodedRow.add(((Number) val).doubleValue());
                 continue;
             }
             String key = "col_" + i;
-            String subKey = row.get(i).toString();
+            String subKey = val.toString();
             if(!this.encoder.checkSubkey(key, subKey)){
                 throw new IllegalArgumentException("Unknown category: " + subKey + " in column " + i);
             }
-            int encodedVal = this.encoder.getData(key, subKey);
-            row.set(i, encodedVal);
+            double encodedVal = (double) this.encoder.getData(key, subKey);
+            encodedRow.add(encodedVal);
         }
         return predictRow(row);
     }
