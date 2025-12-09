@@ -85,7 +85,7 @@ public class LinearRegression {
             for(int j = 0; j < numFeatures; j++){
                 this.weights[j] -= 2 * (learningRate / numSamples) * weightGradients[j];
             }
-           this.bias -= (learningRate / numSamples) * biasGradient;
+           this.bias -= 2 * (learningRate / numSamples) * biasGradient;
         }
     }
 
