@@ -68,6 +68,3 @@ This prevents:
 * Ridge / Lasso Regression
 * R² and MAE metrics
 * Mini-batch gradient descent
-
-# License
-This project is intended for educational use.
