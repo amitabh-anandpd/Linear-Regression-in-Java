@@ -81,7 +81,7 @@ public class LinearRegression {
                 loss += err * err;
             }
             loss /= numSamples;
-            if (epoch % 10 == 0) {
+            if (epoch % 100 == 0) {
                 System.out.println("Epoch " + epoch + " Loss: " + loss);
             }
             for(int j = 0; j < numFeatures; j++){
@@ -93,7 +93,8 @@ public class LinearRegression {
 
     public double predict(List<Object> row){
         if (row.size() != numFeatures) {
-            throw new IllegalArgumentException("Feature size mismatch");
+            throw new IllegalArgumentException("Feature size mismatch"+
+                    ": expected " + numFeatures + ", got " + row.size());
         }
         List<Object> encodedRow = new java.util.ArrayList<>(numFeatures);
         for(int i = 0; i < numFeatures; i++){
