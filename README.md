@@ -21,7 +21,7 @@ This project implements Linear Regression from scratch in Java, without using an
 ├── DataFrame.java        // Custom tabular data structure
 ├── EncodeData.java       // Categorical encoder
 ├── LinearRegression.java // Linear Regression model
-├── LinearRegressionTest.java // Test / demo
+├── Test.java // Test / demo
 └── README.md
 ```
 
@@ -51,3 +51,22 @@ b^{(t+1)}
 = b^{(t)} - \alpha \cdot \frac{2}{n}
 \sum_{i=1}^{n} (\hat{y}_i - y_i)
 ```
+## Categorical Encoding
+* Automatically detects non-numeric columns
+* Encodes categories per feature
+* Encoder is learned during training and reused during prediction
+* Unknown categories during inference throw an explicit error
+This prevents:
+* silent data leakage
+* inconsistent feature mappings
+
+# Possible Extensions
+* One-Hot Encoding
+* Feature normalization
+* Logistic Regression
+* Ridge / Lasso Regression
+* R² and MAE metrics
+* Mini-batch gradient descent
+
+# License
+This project is intended for educational use.
