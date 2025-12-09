@@ -40,16 +40,18 @@ public class LinearRegression {
                 int encodedVal = this.encoder.getData(key, subKey);
                 data.get(i).set(j, encodedVal);
             }
+            colType.set(j, Integer.class);
         }
     }
     public void fit(DataFrame dataframe, int targetIndex){
-        this.data = dataframe.getData();
+        DataFrame copy = dataframe.deepCopy();
+        this.data = copy.getData();
         this.numSamples = data.size();
         this.numFeatures = data.get(0).size() - 1;
         this.weights = new double[numFeatures];
-        List<Object> target = dataframe.getColumn(targetIndex);
-        dataframe.removeColumn(targetIndex);
-        checkEncoding(this.data, dataframe.colType);
+        List<Object> target = copy.getColumn(targetIndex);
+        copy.removeColumn(targetIndex);
+        checkEncoding(this.data, copy.colType);
         fit(this.data, target);
     }
     private double predictRow(List<Object> row) {
