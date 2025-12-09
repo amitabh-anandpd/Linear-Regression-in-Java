@@ -56,6 +56,7 @@ b^{(t+1)}
 * Encodes categories per feature
 * Encoder is learned during training and reused during prediction
 * Unknown categories during inference throw an explicit error
+
 This prevents:
 * silent data leakage
 * inconsistent feature mappings
