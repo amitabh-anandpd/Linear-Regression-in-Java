@@ -11,9 +11,6 @@ public class LinearRegression {
     int epochs = 1000;
     LinearRegression() {
         this.data = null;
-        for (int i = 0; i < this.weights.length; i++) {
-            this.weights[i] = 0.0;
-        }
         this.bias = 0.0;
     }
     private boolean isNumeric(Class<?> cls) {
@@ -50,7 +47,6 @@ public class LinearRegression {
         this.numSamples = data.size();
         this.numFeatures = data.get(0).size() - 1;
         this.weights = new double[numFeatures];
-        this.bias = 0.0;
         List<Object> target = dataframe.getColumn(targetIndex);
         dataframe.removeColumn(targetIndex);
         checkEncoding(this.data, dataframe.colType);
@@ -112,13 +108,10 @@ public class LinearRegression {
             double encodedVal = (double) this.encoder.getData(key, subKey);
             encodedRow.add(encodedVal);
         }
-        return predictRow(row);
+        return predictRow(encodedRow);
     }
     public double[] predict(DataFrame dataframe) {
         List<List<Object>> features = dataframe.getData();
-        List<Class<?>> colType = dataframe.colType;
-
-        checkEncoding(features, colType);
 
         int n = features.size();
         double[] predictions = new double[n];
